@@ -172,8 +172,12 @@ void user_verifier_lookup(char * username,
 	struct stat buf;
 	if (stat(srpfile, &buf) != 0)
 		return;
-
-	*generation = ((uint64_t)buf.st_mtim.tv_sec << 32) | buf.st_mtim.tv_nsec;
+#endif
+	
+#ifdef __APPLE__
+	*generation = ((uint64_t)buf.st_mtimespec.tv_sec << 32) | buf.st_mtimespec.tv_nsec;
+#else
+ 	*generation = ((uint64_t)buf.st_mtim.tv_sec << 32) | buf.st_mtim.tv_nsec;
 #endif
 
 	if (!lookup_data || !hashversion)
